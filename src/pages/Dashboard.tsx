@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import {
   Heart,
   Plus,
@@ -25,6 +21,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { WeddingList } from "@/components/wedding/WeddingList";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 // Mock data for user's weddings
 const mockWeddings = [
@@ -112,7 +113,9 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="font-medium text-sm">User Name</p>
-                <p className="text-xs text-muted-foreground">user@example.com</p>
+                <p className="text-xs text-muted-foreground">
+                  user@example.com
+                </p>
               </div>
             </div>
             <Button
@@ -187,6 +190,9 @@ const Dashboard = () => {
           {/* Weddings List */}
           <div className="bg-card rounded-2xl border border-border shadow-soft">
             <div className="p-6 border-b border-border">
+              <WeddingList />
+            </div>
+            {/* <div className="p-6 border-b border-border">
               <h2 className="font-display text-xl font-semibold">
                 My Weddings
               </h2>
@@ -276,7 +282,7 @@ const Dashboard = () => {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </div> */}
           </div>
 
           {/* Quick Actions */}

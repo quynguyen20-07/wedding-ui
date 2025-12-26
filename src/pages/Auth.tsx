@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Heart, Mail, Lock, User, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/stores/authStore";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, register, isAuthenticated, user } = useAuthStore();
+  
   const [mode, setMode] = useState<"signin" | "signup">(
     searchParams.get("mode") === "signup" ? "signup" : "signin"
   );
@@ -32,19 +35,35 @@ const Auth = () => {
     }
   }, [searchParams]);
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate authentication - would connect to backend
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: mode === "signup" ? "Account created!" : "Welcome back!",
-        description: "Redirecting to your dashboard...",
+    try {
+      if (mode === "signup") {
+        await register({ name: formData.name, email: formData.email, password: formData.password });
+        toast({ title: "Tạo tài khoản thành công!", description: "Đang chuyển hướng..." });
+      } else {
+        await login({ email: formData.email, password: formData.password });
+        toast({ title: "Đăng nhập thành công!", description: "Chào mừng bạn trở lại!" });
+      }
+    } catch (error) {
+      toast({ 
+        title: "Lỗi", 
+        description: (error as Error).message,
+        variant: "destructive"
       });
-      navigate("/dashboard");
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
